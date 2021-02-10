@@ -18,11 +18,6 @@ from sgtk import TankError
 from tank_vendor import six
 import sys
 
-pathToInsert = os.path.join(os.path.dirname(os.path.realpath(__file__)), '..', '..', '..', '..', '..', 'hooks', 'tk-multi-publish2', 'basic')
-if pathToInsert not in sys.path:
-    sys.path.insert(1, pathToInsert)
-
-import internal_utils
 
 from .file_action import FileAction
 from ..scene_operation import reset_current_scene, open_file, OPEN_FILE_ACTION
@@ -81,6 +76,12 @@ class OpenFileAction(FileAction):
                                                    dismissString='No')
 
                 if confirmResult == 'Yes':
+
+                    pathToInsert = os.path.join(self._app.sgtk.pipeline_configuration.get_config_location(), 'hooks','tk-multi-publish2', 'basic')
+                    if pathToInsert not in sys.path:
+                        sys.path.insert(1, pathToInsert)
+                    import internal_utils
+
                     internal_utils.cloudUtils.downloadFromCloud(new_ctx.sgtk.shotgun, self.environment.context, src_path)
             '''
                 LOCAL CHANGES -end
