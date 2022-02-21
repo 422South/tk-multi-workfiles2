@@ -80,7 +80,7 @@ class SceneOperation(HookClass):
 
             # Delete unknown plugins
             plugins_list = cmds.unknownPlugin(q=True, l=True)
-            if plugins_list:
+            if plugins_list and (u'stereoCamera' not in plugins_list):
                 cmds.confirmDialog(title='Confirm', message='Unkown plugins found:\n\n' + str(plugins_list) + '\n\nDeleting them')
 
                 for plugin in plugins_list:
