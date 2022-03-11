@@ -43,6 +43,7 @@ class OpenFileAction(FileAction):
         )
 
     def _do_copy_and_open(
+
         self, src_path, dst_path, version, read_only, new_ctx, parent_ui
     ):
         """
@@ -60,6 +61,8 @@ class OpenFileAction(FileAction):
             # can't do anything!
             return False
 
+
+
         if src_path and src_path != dst_path:
             # check that the source path exists:
 
@@ -76,13 +79,9 @@ class OpenFileAction(FileAction):
                                                    dismissString='No')
 
                 if confirmResult == 'Yes':
-
-                    pathToInsert = os.path.join(self._app.sgtk.pipeline_configuration.get_config_location(), 'hooks','tk-multi-publish2', 'basic')
-                    if pathToInsert not in sys.path:
-                        sys.path.insert(1, pathToInsert)
-                    import internal_utils
-
-                    internal_utils.cloudUtils.downloadFromCloud(new_ctx.sgtk.shotgun, self.environment.context, src_path)
+                    fw = sgtk.platform.get_framework("tk-422-utils")
+                    cloudUtils = fw.import_module('utils.cloud_utils')
+                    cloudUtils.downloadFromCloud(new_ctx.sgtk.shotgun, self.environment.context, src_path)
             '''
                 LOCAL CHANGES -end
             '''
