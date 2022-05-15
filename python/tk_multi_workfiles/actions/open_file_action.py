@@ -79,7 +79,7 @@ class OpenFileAction(FileAction):
                                                    dismissString='No')
 
                 if confirmResult == 'Yes':
-                    fw = sgtk.platform.get_framework("tk-422-utils")
+                    fw = sgtk.platform.get_framework("tk-framework-422-utils")
                     cloudUtils = fw.import_module('utils.cloud_utils')
                     cloudUtils.downloadFromCloud(new_ctx.sgtk.shotgun, self.environment.context, src_path)
             '''
