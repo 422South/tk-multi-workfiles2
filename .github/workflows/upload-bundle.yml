@@ -1,0 +1,57 @@
+name: upload-bundle
+
+on:
+  workflow_run:
+    workflows:
+      - Update-tags
+    types:
+      - completed
+
+jobs:
+  upload-bundle:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Check repository topics
+        id: check-topics
+        env:
+          GITHUB_TOKEN: ${{ secrets.ACTIONS_PAT }}
+        run: |
+          topics=$(curl -s -H "Authorization: token $GITHUB_TOKEN" \
+            https://api.github.com/repos/${{ github.repository }} | jq -r '.topics[]')
+          echo "Topics: $topics"
+          if [[ ! " $topics " =~ " bundle " ]]; then
+            echo "Repository does not have the 'bundle' topic. Skipping..."
+            exit 1
+          fi
+
+    
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: 'pip' # caching pip dependencies
+
+      - name: Setup environment
+        id: setup_env
+        shell: bash
+        run: |
+          pip install -r .github/bundle/requirements.txt
+          sudo apt-get install tmate
+
+      - name: Get the version
+        id: get_version
+        run: |
+          git fetch --tags
+          echo ::set-output name=VERSION::$(git describe --tags --abbrev=0)
+        shell: bash
+
+      - name: Run script
+        env:
+          LAST_COMMIT_TAG: ${{ steps.get_version.outputs.VERSION }}
+          GITHUB_TOKEN: ${{ secrets.ACTIONS_PAT }}
+          SG_SCRIPT_KEY: ${{ secrets.SG_SCRIPT_KEY }}
+
+        run: |
+          #tmate -F
+          python '.github/bundle/bundle-uploader.py'
