@@ -1,0 +1,32 @@
+name: Update-tags
+
+on:
+  pull_request:
+    types: [closed]
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    if: github.event.pull_request.merged == true && contains(github.event.pull_request.labels.*.name, 'bundle-release')
+
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+
+      - name: Bump version and push tag
+        id: create_new_tag
+        run: |
+          git fetch --tags
+          TAG=$(git describe --tags $(git rev-list --tags --max-count=1))
+          NEW_TAG=$(echo $TAG | awk -F. '{$NF = $NF + 1;} 1' | sed 's/ /./g')
+          git config --local user.email "craig@craigh.co.uk"
+          git config --local user.name "GitHub Action"
+          git tag $NEW_TAG
+          echo ::set-output name=tag::${NEW_TAG}
+        shell: bash
+
+      - name: Push tag
+        run: git push origin ${{ steps.create_new_tag.outputs.tag }}
