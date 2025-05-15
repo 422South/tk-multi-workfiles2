@@ -125,6 +125,12 @@ configuration:
         description: Contains methods to retrieve custom user login and push user data when a
                      work file is saved.
 
+    open_file_not_found_hook:
+      type: hook
+      default_value: "{self}/open_file_not_found.py"
+      default_value_tk-maya: "{self}/open_file_not_found.py:{self}/file_open_not_found_tk-maya.py"
+      description: Actions to perform when a source file is not found
+
     # General preferences
     #
     entities:
@@ -303,3 +309,5 @@ frameworks:
     # We need a version of tk-framework-shotgunutils with a fix for deleting items.
     - {"name": "tk-framework-shotgunutils", "version": "v5.x.x", "minimum_version": "v5.3.5"}
     - {"name": "tk-framework-qtwidgets", "version": "v2.x.x", "minimum_version": "v2.10.8"}
+    - {"name": "tk-framework-422-utils", "version": "v1.x.x"}
+
