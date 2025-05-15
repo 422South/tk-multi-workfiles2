@@ -75,7 +75,7 @@ class OpenFileAction(FileAction):
         if src_path and src_path != dst_path:
             # check that the source path exists:
             if not os.path.exists(src_path and self._app.execute_hook(
-                    "hook_open_file_not_found", source_path=src_path, parent_ui=parent_ui, new_ctx=new_ctx)):
+                    "open_file_not_found_hook", source_path=src_path, parent_ui=parent_ui, new_ctx=new_ctx)):
                 return False
 
         if new_ctx != self._app.context:
