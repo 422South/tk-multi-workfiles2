@@ -84,6 +84,12 @@ configuration:
         description: Specify a hook that will be used to copy the file 'source_path'
                      to 'target_path'.
 
+    hook_open_file_not_found:
+      type: hook
+      default_value: "{self}/hook_open_file_not_found.py"
+      description: Actions to perform when a source file is not found
+
+
     hook_filter_work_files:
         type: hook
         default_value: "{self}/filter_work_files.py"

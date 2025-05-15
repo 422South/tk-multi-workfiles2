@@ -46,14 +46,14 @@ class OpenFileAction(FileAction):
         )
 
     def _do_copy_and_open(
-        self,
-        src_path,
-        dst_path,
-        version,
-        read_only,
-        new_ctx,
-        parent_ui,
-        check_refs=False,
+            self,
+            src_path,
+            dst_path,
+            version,
+            read_only,
+            new_ctx,
+            parent_ui,
+            check_refs=False,
     ):
         """
         Copies src_path to dst_path, creates folders, restarts the engine and then opens
@@ -74,12 +74,8 @@ class OpenFileAction(FileAction):
 
         if src_path and src_path != dst_path:
             # check that the source path exists:
-            if not os.path.exists(src_path):
-                QtGui.QMessageBox.critical(
-                    parent_ui,
-                    "File doesn't exist!",
-                    "The file\n\n%s\n\nCould not be found to open!" % src_path,
-                )
+            if not os.path.exists(src_path and self._app.execute_hook(
+                    "hook_open_file_not_found", source_path=src_path, parent_ui=parent_ui, new_ctx=new_ctx)):
                 return False
 
         if new_ctx != self._app.context:
@@ -166,7 +162,7 @@ class OpenFileAction(FileAction):
             )
         except Exception as e:
             if not self.__handle_open_file_exception(
-                e, dst_path, parent_ui, previous_context
+                    e, dst_path, parent_ui, previous_context
             ):
                 return False
             is_file_opened = True
@@ -191,7 +187,7 @@ class OpenFileAction(FileAction):
         return True
 
     def __handle_open_file_exception(
-        self, error_message, dst_path, parent_ui, previous_context
+            self, error_message, dst_path, parent_ui, previous_context
     ):
         """
         If the 'Open file' operation fails, restore the original context
@@ -208,8 +204,8 @@ class OpenFileAction(FileAction):
         # take this as a failed operation, so let's keep the context that the
         # work file should be opened in.
         if isinstance(exc_value, RuntimeError) and re.match(
-            r"\S+.v[\d.]+.nk is for nuke[\d.]+v[\d.]+; this is nuke[\d.]+v[\d.]+",
-            str(error_message),
+                r"\S+.v[\d.]+.nk is for nuke[\d.]+v[\d.]+; this is nuke[\d.]+v[\d.]+",
+                str(error_message),
         ):
             _require_context_restore = False
             QtGui.QMessageBox.warning(
@@ -241,7 +237,7 @@ class CopyAndOpenInCurrentWorkAreaAction(OpenFileAction):
     """ """
 
     def _open_in_current_work_area(
-        self, src_path, src_template, file, src_work_area, parent_ui
+            self, src_path, src_template, file, src_work_area, parent_ui
     ):
         """ """
         # get info about the current work area:
@@ -273,12 +269,12 @@ class CopyAndOpenInCurrentWorkAreaAction(OpenFileAction):
         # get the sandbox user name if there is one:
         sandbox_user_name = None
         if (
-            src_work_area
-            and src_work_area.contains_user_sandboxes
-            and src_work_area.context
-            and src_work_area.context.user
-            and g_user_cache.current_user
-            and src_work_area.context.user["id"] != g_user_cache.current_user["id"]
+                src_work_area
+                and src_work_area.contains_user_sandboxes
+                and src_work_area.context
+                and src_work_area.context.user
+                and g_user_cache.current_user
+                and src_work_area.context.user["id"] != g_user_cache.current_user["id"]
         ):
             sandbox_user_name = src_work_area.context.user.get("name", "Unknown")
 
